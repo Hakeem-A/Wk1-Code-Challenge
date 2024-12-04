@@ -1,8 +1,13 @@
- 
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 function calculatePAYE(taxableIncome) {
     let tax = 0;
 
-    
     if (taxableIncome <= 24000) {
         tax = taxableIncome * 0.10;
     } else if (taxableIncome <= 32333) {
@@ -18,7 +23,6 @@ function calculatePAYE(taxableIncome) {
     return tax;
 }
 
-
 function calculateNHIF(salary) {
     if (salary <= 5999) return 150;
     if (salary <= 7999) return 300;
@@ -33,9 +37,8 @@ function calculateNHIF(salary) {
     if (salary <= 79999) return 1200;
     if (salary <= 89999) return 1300;
     if (salary <= 99999) return 1400;
-    return 1500; 
+    return 1500;
 }
-
 
 function calculateNSSF(basicSalary) {
     let nssfTierI = 0;
@@ -51,11 +54,9 @@ function calculateNSSF(basicSalary) {
     return nssfTierI + nssfTierII;
 }
 
-
 function calculateGrossSalary(basicSalary, benefits) {
     return basicSalary + benefits;
 }
-
 
 function calculateNetSalary(basicSalary, benefits) {
     const grossSalary = calculateGrossSalary(basicSalary, benefits);
@@ -73,12 +74,31 @@ function calculateNetSalary(basicSalary, benefits) {
     console.log(`Net Salary: KES ${netSalary}`);
 }
 
+function getSalaryDetails() {
+    rl.question("Please enter your basic salary: ", (basicSalaryInput) => {
+        let basicSalary = parseFloat(basicSalaryInput);
 
-const basicSalary = parseFloat(process.argv[2]);  
-const benefits = parseFloat(process.argv[3]);     
+        if (isNaN(basicSalary) || basicSalary <= 0) {
+            console.log("Invalid input. Please enter a valid number for the basic salary.");
+            rl.close();
+            return;
+        }
 
-if (isNaN(basicSalary) || isNaN(benefits)) {
-    console.log("Please provide valid numbers for basic salary and benefits.");
-} else {
-    calculateNetSalary(basicSalary, benefits);
+        rl.question("Please enter your benefits (e.g., allowances, bonuses, etc.): ", (benefitsInput) => {
+            let benefits = parseFloat(benefitsInput);
+
+            if (isNaN(benefits) || benefits < 0) {
+                console.log("Invalid input. Please enter a valid number for the benefits.");
+                rl.close();
+                return;
+            }
+
+            // Calculate the net salary based on the entered values
+            calculateNetSalary(basicSalary, benefits);
+            rl.close();
+        });
+    });
 }
+
+// Call the function to prompt the user and calculate the salary
+getSalaryDetails();
